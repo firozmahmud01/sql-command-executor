@@ -1,0 +1,83 @@
+<html>
+<head>
+    <title>BAUET LAB WORK</title>
+</head>
+<body >
+<textarea rows="6" id='userinput' style="width: 100%;"></textarea>
+<button style="width: 10%; background-color: green;height: 30px;" onclick="submitinput();">RUN</button>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<div id='mytable'>
+
+</div>
+<script>
+async function submitinput(){
+    let doc=document.getElementById('userinput');
+    if(!doc.value){
+        
+        alert("Fill the input.");
+        return;
+    }
+    let res=await fetch('/request',{
+        method:"POST",
+        body:JSON.stringify({input:doc.value}),
+        headers: {
+    'Content-Type': 'application/json;charset=utf-8'
+  }
+        
+    });
+    let resu=await res.json();
+
+
+    showtable(resu);
+}
+
+function showtable(obj){
+    let table=document.getElementById('mytable');
+    let data=""
+    if(obj instanceof Array){
+        if(obj.length==0){
+            table.innerHTML="Command successfully exicuted or no data found.";
+            return;
+        }
+        let keys=Object.keys(obj[0])
+        data+=objtohead(keys);
+        for(let k of obj){
+            data+=objtorow(k,keys);
+        }
+    }else{
+        let keys=Object.keys(obj)
+        data+=objtohead(keys);
+            data+=objtorow(obj,keys);
+    }
+    table.innerHTML="<table border='5' style='width:100%;'>"+data+"</table>";
+}
+function objtorow(obj,keys){
+    let data="<tr>"
+    for(let key of keys){
+        data+="<td>"+obj[key]+"</td>"
+    }
+    data+="</tr>"
+    return data;
+}
+function objtohead(keys){
+    let data="<tr>"
+    for(let key of keys){
+        data+="<th>"+key+"</th>"
+    }
+    data+="</tr>"
+    return data;
+}
+
+
+
+</script>
+</body>
+</html>
